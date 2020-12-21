@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Schema for Online Food Delivery Marketplace database -->
+<Schema name="Online Food Delivery Marketplace">
+
+<!-- Shared Dimensions -->
+<Dimension name="Customer" primaryKey="customerID">
+	<Hierarchy hasAll="true" primaryKey="customerID">
+		<Table name="dimcustomer"/>
+		<Level name="Customer Name" column="customerName" uniqueMembers="true"/>
+		<Level name="Customer Age Group" column="customerAgeGroup" uniqueMembers="false"/>
+		<Level name="Customer Category" column="customerCategory" uniqueMembers="false"/>
+		<Level name="Customer Membership" column="customerMembership" uniqueMembers="false"/>
+	</Hierarchy>
+</Dimension>
+
+<Dimension name="Eatery" primaryKey="eateryID">
+	<Hierarchy hasAll="true" primaryKey="eateryID">
+		<Table name="dimeatery"/>
+		<Level name="Eatery Name" column="eateryName" uniqueMembers="true"/>
+		<Level name="Eatery Category" column="eateryCategory" uniqueMembers="false"/>
+		<Level name="Eatery Location" column="eateryLocation" uniqueMembers="true"/>
+	</Hierarchy>
+</Dimension>
+
+<Dimension name="Location" primaryKey="locationID">
+	<Hierarchy hasAll="true" primaryKey="locationID">
+		<Table name="dimlocation"/>
+		<Level name="Building Number" column="locationBuildingNumber" uniqueMembers="false"/>
+		<Level name="Street" column="locationStreet" uniqueMembers="false"/>
+		<Level name="City" column="locationCity" uniqueMembers="false"/>
+		<Level name="State" column="locationState" uniqueMembers="false"/>
+		<Level name="Country" column="locationCountry" uniqueMembers="false"/>
+	</Hierarchy>
+</Dimension>
+
+<Dimension name="Payment" primaryKey="paymentID">
+	<Hierarchy hasAll="true" primaryKey="paymentID">
+		<Table name="dimpayment"/>
+		<Level name="Promotion Code" column="has_promotion" uniqueMembers="false"/>
+		<Level name="Payment Method" column="paymentMethod" uniqueMembers="false"/>
+		<Level name="Payment Category" column="paymentCategory" uniqueMembers="false"/>
+	</Hierarchy>
+</Dimension>
+
+<Dimension name="Promotion" primaryKey="promoID">
+	<Hierarchy hasAll="true" primaryKey="promoID">
+		<Table name="dimpromotion"/>
+		<Level name="Promotion Code" column="promoCode" uniqueMembers="true"/>
+	</Hierarchy>
+</Dimension>
+
+<Dimension name="Time" primaryKey="timeID">
+	<Hierarchy hasAll="true" primaryKey="timeID">
+		<Table name="dimtime" primaryKey="timeID"/>
+		<Level name="Minute" column="timeMinute" uniqueMembers="false"/>
+		<Level name="Hour" column="timeHour" uniqueMembers="false"/>
+		<Level name="Day" column="timeDay" uniqueMembers="false"/>
+		<Level name="Week" column="timeWeek" uniqueMembers="false"/>
+		<Level name="Month" column="timeMonth" uniqueMembers="false"/>
+		<Level name="Quarter" column="timeQuarter" uniqueMembers="false"/>
+		<Level name="Year" column="timeYear" uniqueMembers="false"/>
+	</Hierarchy>
+</Dimension>
+
+<Dimension name="Victual" primaryKey="victualID">
+	<Hierarchy hasAll="true" primaryKey="victualID">
+		<Table name="dimvictual" primaryKey="victualID"/>
+		<Level name="Victual Name" column="victualName" uniqueMembers="true"/>
+		<Level name="Victual Type" column="victualType" uniqueMembers="false"/>
+		<Level name="Victual Category" column="victualCategory" uniqueMembers="false"/>
+	</Hierarchy>
+</Dimension>
+
+<!-- Cubes -->
+<Cube name="Sales">
+	<Table name="factsales" primaryKey="salesID"/>
+	
+	<DimensionUsage name="Time" source="Time" foreignKey="timeID"/>
+	<DimensionUsage name="Customer" source="Customer" foreignKey="customerID"/>
+	<DimensionUsage name="Victual" source="Victual" foreignKey="victualID"/>
+	
+	<Measure name="Unit Sales" column="dollars_sold" aggregator="sum" datatype="Numeric"/>
+</Cube>
+
+<Cube name="Order">
+	<Table name="factorder" primaryKey="orderID"/>
+	
+	<DimensionUsage name="Time" source="Time" foreignKey="timeID"/>
+	<DimensionUsage name="Customer" source="Customer" foreignKey="customerID"/>
+	<DimensionUsage name="Victual" source="Victual" foreignKey="victualID"/>
+	<DimensionUsage name="Eatery" source="Eatery" foreignKey="eateryID"/>
+	<DimensionUsage name="Location" source="Location" foreignKey="locationID"/>
+	<DimensionUsage name="Payment" source="Payment" foreignKey="paymentID"/>
+	
+	<Measure name="Quantity Ordered" column="quantity_ordered" aggregator="sum" datatype="Integer"/>
+</Cube>
+
+<Cube name="Delivery">
+	<Table name="factdelivery" primaryKey="deliveryID"/>
+	
+	<DimensionUsage name="Time" source="Time" foreignKey="timeID"/>
+	<DimensionUsage name="Customer" source="Customer" foreignKey="customerID"/>
+	<DimensionUsage name="Victual" source="Victual" foreignKey="victualID"/>
+	<DimensionUsage name="Eatery" source="Eatery" foreignKey="eateryID"/>
+	<DimensionUsage name="From Location" source="Location" foreignKey="locationID"/>
+	<DimensionUsage name="To Location" source="Location" foreignKey="locationID"/>
+	
+	<Measure name="Distance Travelled (KM)" column="km_travelled" aggregator="sum" datatype="Numeric"/>
+</Cube>
+
+</Schema>

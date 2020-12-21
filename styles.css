@@ -1,0 +1,18 @@
+legend {
+	background-color: #000;
+	color: #fff;
+	padding: 3px 6px;
+}
+
+#sourceFieldset {
+	display: inline-block;
+	border: 2px solid #000;
+}
+
+select {
+	border: none;
+	border-bottom: 2px solid grey;
+}
+
+
+
